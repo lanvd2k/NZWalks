@@ -64,3 +64,5 @@ D:\UdemyPractice\NZWalks\NZWalks.API\bin\Debug\net6.0\AutoMapper.Extensions.Micr
 D:\UdemyPractice\NZWalks\NZWalks.API\bin\Debug\net6.0\FluentValidation.dll
 D:\UdemyPractice\NZWalks\NZWalks.API\bin\Debug\net6.0\FluentValidation.AspNetCore.dll
 D:\UdemyPractice\NZWalks\NZWalks.API\bin\Debug\net6.0\FluentValidation.DependencyInjectionExtensions.dll
+D:\UdemyPractice\NZWalks\NZWalks.API\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\UdemyPractice\NZWalks\NZWalks.API\bin\Debug\net6.0\Microsoft.IdentityModel.Abstractions.dll
