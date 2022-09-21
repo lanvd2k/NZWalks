@@ -1,0 +1,36 @@
+﻿@model IEnumerable<NZWalks.Web.Models.DTO.WalkDifficultyDTO>
+<br />
+<div class="container p-4 border">
+    <div class="row pb-2">
+        <div class="col">
+            <h1 class="text-primary">WalkDifficulty List</h1>
+        </div>
+        <div class="col text-end pt-1">
+            <a asp-controller="WalkDifficulty" asp-action="CreateWalkDifficulty" class="btn btn-outline-primary"><i class="bi bi-plus-square-fill"></i> Create New Region</a>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Code</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Code</td>
+                    
+                    <td>
+                        <a asp-controller="WalkDifficulty" asp-action="UpdateWalkDifficulty" asp-route-walkDifficultyId="@item.Id" class="btn btn-outline-success"><i class="bi bi-pencil-square"></i></a>
+                        <a asp-controller="WalkDifficulty" asp-action="DeleteWalkDifficulty" asp-route-walkDifficultyId="@item.Id" class="btn btn-outline-danger"><i class="bi bi-trash-fill"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

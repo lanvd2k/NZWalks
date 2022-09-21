@@ -1,0 +1,43 @@
+﻿@model IEnumerable<NZWalks.Web.Models.DTO.RegionDTO>
+<br />
+<div class="container p-4 border">
+    <div class="row pb-2">
+        <div class="col">
+            <h1 class="text-primary">Region List</h1>
+        </div>
+        <div class="col text-end pt-1">
+            <a asp-controller="Region" asp-action="CreateRegion" class="btn btn-outline-primary"><i class="bi bi-plus-square-fill"></i> Create New Region</a>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Area</th>
+                <th>Lat</th>
+                <th>Long</th>
+                <th>Population</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Code</td>
+                    <td>@item.Name</td>
+                    <td>@item.Area</td>
+                    <td>@item.Lat</td>
+                    <td>@item.Long</td>
+                    <td>@item.Population</td>
+                    <td>
+                        <a asp-controller="Region" asp-action="UpdateRegion" asp-route-regionId="@item.Id" class="btn btn-outline-success"><i class="bi bi-pencil-square"></i></a>
+                        <a asp-controller="Region" asp-action="DeleteRegion" asp-route-regionId="@item.Id" class="btn btn-outline-danger"><i class="bi bi-trash-fill"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -52,7 +52,7 @@ builder.Services.AddScoped<IRegionRepository, RegionRepository>();
 builder.Services.AddScoped<IWalkRepository, WalkRepository>();
 builder.Services.AddScoped<IWalkDifficultyRepository, WalkDifficultyRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<ITokenHandler, NZWalks.API.Repositories.TokenHandler>();
+//builder.Services.AddScoped<ITokenHandler, NZWalks.API.Repositories.TokenHandler>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 

@@ -1,0 +1,35 @@
+﻿@model NZWalks.Web.Models.DTO.UpdateWalkDifficultyRequest
+
+<form asp-action="UpdateWalkDifficulty">
+    <br />
+    <div class="container border p-3">
+        <h1 class="text-primary">Update WalkDifficulty</h1>
+        <hr />
+        @*<input hidden asp-for="Id"/>*@
+        <div class="row">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="col-2">
+                <label asp-for="Code" class="control-label pt-2" style="font-size:20px"></label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="Code" class="form-control" />
+                <span asp-validation-for="Code" class="text-danger"></span>
+            </div>
+
+            
+
+            <div class="col-5">
+                <a asp-action="IndexWalkDifficulty" asp-controller="WalkDifficulty" class="btn btn-primary form-control">Back to list</a>
+            </div>
+            <div class="col-5">
+                <input type="submit" value="Update" class="btn btn-success form-control" />
+            </div>
+        </div>
+    </div>
+</form>
+
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

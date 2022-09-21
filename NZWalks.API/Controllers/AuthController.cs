@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NZWalks.API.Models;
 using NZWalks.API.Models.DTO;
 using NZWalks.API.Repositories;
+using System.Net;
 
 namespace NZWalks.API.Controllers
 {
@@ -8,29 +10,54 @@ namespace NZWalks.API.Controllers
     [Route("[controller]")]
     public class AuthController : Controller
     {
-        private readonly IUserRepository _userRepository;
-        private readonly ITokenHandler _tokenHandler;
-        public AuthController(IUserRepository userRepository, ITokenHandler tokenHandler)
+        private readonly IUserRepository _userRepo;
+        protected APIResponse _response;
+        public AuthController(IUserRepository userRepo)
         {
-            _userRepository = userRepository;
-            _tokenHandler = tokenHandler;
+            _userRepo = userRepo;
+            _response = new();
         }
 
-        [HttpPost]
-        [Route("Login")]
-        public async Task<IActionResult> LoginAsync(LoginRequest loginRequest)
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequest model)
         {
-            
-            // Check if user is authenticated and check username and password
-            var user = await _userRepository.AuthenticateAsync(loginRequest.UserName, loginRequest.Password);
-
-            if (user != null)
+            var loginResponse = await _userRepo.LoginAsync(model);
+            if (loginResponse.User == null || string.IsNullOrEmpty(loginResponse.Token))
             {
-                // Generate JWT token
-                var token = await _tokenHandler.CreateTokenAsync(user);
-                return Ok(token);
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("User name or Password is not correct!");
+                return BadRequest(_response);
             }
-            return BadRequest("UserName or Password is incorrect!");
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = loginResponse;
+            return Ok(_response);
+        }
+
+        [HttpPost("Register")]
+        public async Task<IActionResult> Register([FromBody] RegisterationRequestDTO model)
+        {
+            bool ifUserNameUnique = _userRepo.IsUnique(model.UserName);
+            if (!ifUserNameUnique)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("User name already exists");
+                return BadRequest(_response);
+            }
+            var user = await _userRepo.RegisterAsync(model);
+            if (user == null)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Error while registering");
+                return BadRequest(_response);
+            }
+
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            return Ok(_response);
         }
     }
 }

@@ -1,0 +1,47 @@
+﻿
+@using Microsoft.AspNetCore.Components
+@model IEnumerable<NZWalks.Web.Models.DTO.RegionDTO>
+
+<img class="d-block w-100" src="~/images/home/slide1.jpg" />
+<hr />
+<div class="row" style="--bs-gutter-x:0">
+    @foreach (var villa in Model)
+    {
+        <div class="p-4 col-md-12 collg-6">
+            <div class="row" style="border-radius:20px; border:1px solid #ffffff">
+                <div class="col-4">
+                    <img class="d-block w-100" style="border-radius:20px" src="@villa.ImageUrl" alt="First Slide">
+                </div>
+                <div class="col-8">
+                    <p class="card-title text-warning" style="font-size:xx-large">@villa.Name</p>
+                    <p class="card-text">
+                        @((MarkupString)villa.Code)
+                    </p>
+                    <div class="row pb-3 pt-2">
+                        
+                        <div class="col-4">
+                            @*<span class="">Area : @villa.Area.ToString() arches</span><br>*@
+                            <span class="pt-1">Lat : @villa.Lat.ToString() </span><br>
+                            <span class="pt-1">Long : @villa.Long.ToString() </span><br>
+                        </div>
+                        <div class="col-4">
+                            <div class="">
+                                Population:
+                                <span @*style="border-bottom:1px solid #ff6a00"*@>
+                                    @villa.Population.ToString()
+                                </span>
+                            </div>
+                            <div class="">
+                                Area:
+                                <span @*style="border-bottom:1px solid #ff6a00"*@>
+                                    @villa.Area.ToString() arches
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    }
+</div>

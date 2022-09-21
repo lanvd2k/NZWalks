@@ -1,6 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using NZWalks.API.Data;
 using NZWalks.API.Models.Domain;
+using NZWalks.API.Models.DTO;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace NZWalks.API.Repositories
 {
@@ -9,38 +14,74 @@ namespace NZWalks.API.Repositories
         
 
         private readonly NZWalksDbContext _context;
-        public UserRepository(NZWalksDbContext context)
+        private string secretKey;
+        public UserRepository(NZWalksDbContext context, IConfiguration configuration)
         {
             _context = context;
+            secretKey = configuration.GetValue<string>("JWT:Key");
         }
 
-        public async Task<User> AuthenticateAsync(string username, string password)
+        public bool IsUnique(string username)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName.ToLower() == username.ToLower()
-            && x.Password == password);
-
-            if(user == null)
+            var user = _context.Users.FirstOrDefault(u => u.UserName == username);
+            if (user == null)
             {
-                return null;
+                return true;
             }
+            return false;
+        }
 
-            var userRoles = await _context.UserRoles.Where(x => x.UserId == user.Id).ToListAsync();
-
-            if (userRoles.Any())
+        public async Task<LoginResponse> LoginAsync(LoginRequest loginRequestDTO)
+        {
+            var user = _context.Users
+                .FirstOrDefault(u => u.UserName.ToLower() == loginRequestDTO.UserName.ToLower()
+                && u.Password == loginRequestDTO.Password);
+            if (user == null)
             {
-                user.Roles = new List<string>();
-                foreach (var userRole in userRoles)
+                return new LoginResponse()
                 {
-                    var role = await _context.Roles.FirstOrDefaultAsync(x => x.Id == userRole.RoleId);
-                    if (role != null)
-                    {
-                        user.Roles.Add(role.Name);
-                    }
-                }
+                    Token = "",
+                    User = null
+                };
             }
 
-            user.Password = null;
+            //if user was found generate JWT Token
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(secretKey);
 
+            var tokenDescriptor = new SecurityTokenDescriptor()
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Name, user.Id.ToString()),
+                    new Claim(ClaimTypes.Role, user.Role)
+                }),
+                Expires = DateTime.Now.AddDays(7),
+                SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            LoginResponse loginResponseDTO = new LoginResponse()
+            {
+                Token = tokenHandler.WriteToken(token),
+                User = user
+            };
+            return loginResponseDTO;
+        }
+
+        public async Task<User> RegisterAsync(RegisterationRequestDTO registerationRequestDTO)
+        {
+            User user = new User()
+            {
+                UserName = registerationRequestDTO.UserName,
+                Name = registerationRequestDTO.Name,
+                Password = registerationRequestDTO.Password,
+                Role = registerationRequestDTO.Role
+            };
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+            user.Password = "";
             return user;
         }
     }

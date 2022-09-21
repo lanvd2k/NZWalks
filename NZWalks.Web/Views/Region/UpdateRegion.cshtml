@@ -1,0 +1,75 @@
+﻿@model NZWalks.Web.Models.DTO.UpdateRegionRequest
+
+<form asp-action="UpdateRegion">
+    <br />
+    <div class="container border p-3">
+        <h1 class="text-primary">Update Region</h1>
+        <hr />
+        @*<input hidden asp-for="Id"/>*@
+        <div class="row">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="col-2">
+                <label asp-for="Code" class="control-label pt-2" style="font-size:20px"></label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="Code" class="form-control" />
+                <span asp-validation-for="Code" class="text-danger"></span>
+            </div>
+
+            <div class="col-2">
+                <label asp-for="Name" class="control-label pt-2" style="font-size:20px"></label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="col-2">
+                <label asp-for="Area" class="control-label pt-2" style="font-size:20px"></label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="Area" class="form-control" />
+                <span asp-validation-for="Area" class="text-danger"></span>
+            </div>
+
+            <div class="col-2">
+                <label asp-for="Lat" class="control-label pt-2" style="font-size:20px"></label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="Lat" class="form-control" />
+                <span asp-validation-for="Lat" class="text-danger"></span>
+            </div>
+
+            <div class="col-2">
+                <label asp-for="Long" class="control-label pt-2" style="font-size:20px"></label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="Long" class="form-control" />
+                <span asp-validation-for="Long" class="text-danger"></span>
+            </div>
+
+            <div class="col-2">
+                <label asp-for="Population" class="control-label pt-2" style="font-size:20px"></label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="Population" class="form-control" />
+                <span asp-validation-for="Population" class="text-danger"></span>
+            </div>
+
+
+
+            <div class="col-5">
+                <a asp-action="IndexRegion" asp-controller="Region" class="btn btn-primary form-control">Back to list</a>
+            </div>
+            <div class="col-5">
+                <input type="submit" value="Update" class="btn btn-success form-control" />
+            </div>
+        </div>
+    </div>
+</form>
+
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

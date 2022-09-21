@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NZWalks.API.Models;
 using NZWalks.API.Models.Domain;
 using NZWalks.API.Models.DTO;
 using NZWalks.API.Repositories;
@@ -14,30 +15,32 @@ namespace NZWalks.API.Controllers
     {
         private readonly IWalkRepository _walkRepository;
         private readonly IMapper _mapper;
+        protected APIResponse _respone;
         public WalksController(IWalkRepository walkRepository, IMapper mapper)
         {
             _walkRepository = walkRepository;
             _mapper = mapper;
+            _respone = new();
         }
 
         [HttpGet]
-        [Authorize(Roles = "reader")]
         public async Task<IActionResult> GetAllWalksAsync()
         {
             // Fetch data from database
             var walks = await _walkRepository.GetAllAsync();
 
             // Convert domain walks to DTO walks
-            var walksDTO = _mapper.Map<List<WalkDTO>>(walks);
+            //var walksDTO = _mapper.Map<List<WalkDTO>>(walks);
+            _respone.Result = _mapper.Map<List<WalkDTO>>(walks);
+            _respone.StatusCode = System.Net.HttpStatusCode.OK;
 
             // Return response
-            return Ok(walksDTO);
+            return Ok(_respone);
         }
 
         [HttpGet]
         [Route("{id:guid}")]
         [ActionName("GetWalkAsync")]
-        [Authorize(Roles = "reader")]
         public async Task<IActionResult> GetWalkAsync(Guid id)
         {
             // Get Walk domain object from database
@@ -51,7 +54,7 @@ namespace NZWalks.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "writer")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> AddWalkAsync([FromBody] AddWalkRequest addWalkRequest)
         {
             // Convert DTO to Domain object
@@ -75,9 +78,13 @@ namespace NZWalks.API.Controllers
 
         [HttpPut]
         [Route("{id:guid}")]
-        [Authorize(Roles = "writer")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateWalkAsync([FromRoute] Guid id, [FromBody] UpdateWalkRequest updateWalkRequest)
         {
+            if (updateWalkRequest == null || updateWalkRequest.Id != id)
+            {
+                return NotFound();
+            }
             // Convert DTO to Domain object
             var walkDomain = new Walk()
             {
@@ -105,8 +112,8 @@ namespace NZWalks.API.Controllers
 
         [HttpDelete]
         [Route("{id:guid}")]
-        [Authorize(Roles = "writer")]
-        public async Task<IActionResult> DeleteWalkAsync(Guid id)
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult<APIResponse>> DeleteWalkAsync(Guid id)
         {
             // Call Repository to delele walk
             var walkDomain = await _walkRepository.DeleteAsync(id);
