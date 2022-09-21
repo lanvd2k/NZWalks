@@ -26,7 +26,7 @@ namespace NZWalks.Web.Controllers
             {
                 list = JsonConvert.DeserializeObject<List<WalkDifficultyDTO>>(Convert.ToString(respone.Result));
             }
-            
+
             return View(list);
         }
 
@@ -64,6 +64,7 @@ namespace NZWalks.Web.Controllers
 
                 WalkDifficultyDTO model = JsonConvert.DeserializeObject<WalkDifficultyDTO>(Convert.ToString(respone.Result));
                 return View(_mapper.Map<UpdateWalkDifficultyRequest>(model));
+
             }
             return NotFound();
 
@@ -72,19 +73,19 @@ namespace NZWalks.Web.Controllers
         //[Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateWalkDifficulty(UpdateWalkDifficultyRequest model)
+        public async Task<IActionResult> UpdateWalkDifficulty(UpdateWalkDifficultyRequest updateWalkDifficultyRequest)
         {
             if (ModelState.IsValid)
             {
                 TempData["success"] = "Villa updated successfully";
-                var respone = await _walkDifficultyService.UpdateAsync<APIResponse>(model, HttpContext.Session.GetString(SD.SessionToken));
+                var respone = await _walkDifficultyService.UpdateAsync<APIResponse>(updateWalkDifficultyRequest, HttpContext.Session.GetString(SD.SessionToken));
                 if (respone != null && respone.IsSuccess)
                 {
                     return RedirectToAction(nameof(IndexWalkDifficulty));
                 }
             }
             TempData["error"] = "Error encountered";
-            return View(model);
+            return View(updateWalkDifficultyRequest);
         }
 
         //[Authorize(Roles = "admin")]

@@ -15,12 +15,12 @@ namespace NZWalks.Web.Services
             regionUrl = configuration.GetValue<string>("ServiceUrls:NZWalksAPI");
         }
 
-        public Task<T> AddAsync<T>(AddWalkDifficultyRequest region, string token)
+        public Task<T> AddAsync<T>(AddWalkDifficultyRequest addWalkDifficultyRequest, string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.POST,
-                Data = region,
+                Data = addWalkDifficultyRequest,
                 Url = regionUrl + "/WalkDifficulty",
                 Token = token
             });
@@ -56,13 +56,13 @@ namespace NZWalks.Web.Services
             });
         }
 
-        public Task<T> UpdateAsync<T>(UpdateWalkDifficultyRequest walkDifficultyRequest, string token)
+        public Task<T> UpdateAsync<T>(UpdateWalkDifficultyRequest updateWalkDifficultyRequest, string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.PUT,
-                Data = walkDifficultyRequest,
-                Url = regionUrl + "/WalkDifficulty/" + walkDifficultyRequest.Id,
+                Data = updateWalkDifficultyRequest,
+                Url = regionUrl + "/WalkDifficulty/" + updateWalkDifficultyRequest.Id,
                 Token = token
             });
         }
