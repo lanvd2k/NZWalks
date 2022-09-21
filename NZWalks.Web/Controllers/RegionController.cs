@@ -29,14 +29,14 @@ namespace NZWalks.Web.Controllers
             return View(list);
         }
 
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> CreateRegion()
         {
 
             return View();
         }
 
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateRegion(AddRegionRequest model)
@@ -54,7 +54,7 @@ namespace NZWalks.Web.Controllers
             return View(model);
         }
 
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateRegion(Guid regionId)
         {
             var respone = await _regionService.GetAsync<APIResponse>(regionId, HttpContext.Session.GetString(SD.SessionToken));
@@ -68,7 +68,7 @@ namespace NZWalks.Web.Controllers
 
         }
 
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateRegion(UpdateRegionRequest model)
@@ -86,7 +86,7 @@ namespace NZWalks.Web.Controllers
             return View(model);
         }
 
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteRegion(Guid regionId)
         {
             var respone = await _regionService.GetAsync<APIResponse>(regionId, HttpContext.Session.GetString(SD.SessionToken));
@@ -98,7 +98,7 @@ namespace NZWalks.Web.Controllers
             return NotFound();
         }
 
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteRegion(RegionDTO model)

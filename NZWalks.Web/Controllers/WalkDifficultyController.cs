@@ -30,14 +30,14 @@ namespace NZWalks.Web.Controllers
             return View(list);
         }
 
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> CreateWalkDifficulty()
         {
 
             return View();
         }
 
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateWalkDifficulty(AddWalkDifficultyRequest model)
@@ -55,7 +55,7 @@ namespace NZWalks.Web.Controllers
             return View(model);
         }
 
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateWalkDifficulty(Guid walkDifficultyId)
         {
             var respone = await _walkDifficultyService.GetAsync<APIResponse>(walkDifficultyId, HttpContext.Session.GetString(SD.SessionToken));
@@ -69,7 +69,7 @@ namespace NZWalks.Web.Controllers
 
         }
 
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateWalkDifficulty(UpdateWalkDifficultyRequest model)
@@ -87,7 +87,7 @@ namespace NZWalks.Web.Controllers
             return View(model);
         }
 
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteWalkDifficulty(Guid walkDifficultyId)
         {
             var respone = await _walkDifficultyService.GetAsync<APIResponse>(walkDifficultyId, HttpContext.Session.GetString(SD.SessionToken));
@@ -99,7 +99,7 @@ namespace NZWalks.Web.Controllers
             return NotFound();
         }
 
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteWalkDifficulty(WalkDifficultyDTO model)

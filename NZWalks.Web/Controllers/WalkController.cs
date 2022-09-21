@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using NZWalks.Web.Models;
 using NZWalks.Web.Models.DTO;
@@ -11,11 +12,15 @@ namespace NZWalks.Web.Controllers
     public class WalkController : Controller
     {
         private readonly IWalkService _walkService;
+        private readonly IRegionService _regionService;
+        private readonly IWalkDifficultyService _walkDifficultyService;
         private readonly IMapper _mapper;
-        public WalkController(IWalkService walkService, IMapper mapper)
+        public WalkController(IWalkService walkService, IMapper mapper, IRegionService regionService, IWalkDifficultyService walkDifficultyService)
         {
             _walkService = walkService;
             _mapper = mapper;
+            _regionService = regionService;
+            _walkDifficultyService = walkDifficultyService;
         }
         public async Task<IActionResult> IndexWalk()
         {
@@ -29,33 +34,84 @@ namespace NZWalks.Web.Controllers
             return View(list);
         }
 
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> CreateWalk()
         {
-
-            return View();
+            //them
+            AddWalkRequestVM addWalkRequest = new();
+            var responeRegion = await _regionService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
+            if (responeRegion != null && responeRegion.IsSuccess)
+            {
+                addWalkRequest.RegionList = JsonConvert
+                    .DeserializeObject<List<RegionDTO>>(Convert.ToString(responeRegion.Result))
+                    .Select(i => new SelectListItem
+                    {
+                        Text = i.Name,
+                        Value = i.Id.ToString()
+                    });
+            }
+            var responeWalkDifficulty = await _walkDifficultyService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
+            if (responeWalkDifficulty != null && responeWalkDifficulty.IsSuccess)
+            {
+                addWalkRequest.WalkDifficultyList = JsonConvert
+                    .DeserializeObject<List<WalkDifficultyDTO>>(Convert.ToString(responeWalkDifficulty.Result))
+                    .Select(i => new SelectListItem
+                    {
+                        Text = i.Code,
+                        Value = i.Id.ToString()
+                    });
+            }
+            //het them
+            return View(addWalkRequest);
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> CreateWalk(AddWalkRequest model)
+        //[Authorize(Roles = "admin")]
+        public async Task<IActionResult> CreateWalk(AddWalkRequestVM model)
         {
             if (ModelState.IsValid)
             {
-                var respone = await _walkService.AddAsync<APIResponse>(model, HttpContext.Session.GetString(SD.SessionToken));
+                var respone = await _walkService.AddAsync<APIResponse>(model.Walk, HttpContext.Session.GetString(SD.SessionToken));
                 if (respone != null && respone.IsSuccess)
                 {
                     TempData["success"] = "Villa created successfully";
                     return RedirectToAction(nameof(IndexWalk));
                 }
             }
-            TempData["error"] = "Error encountered";
+
+            //them
+            var resRegion = await _regionService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
+            if (resRegion != null && resRegion.IsSuccess)
+            {
+                model.RegionList = JsonConvert
+                    .DeserializeObject<List<RegionDTO>>(Convert.ToString(resRegion.Result))
+                    .Select(i => new SelectListItem
+                    {
+                        Text = i.Name,
+                        Value = i.Id.ToString()
+                    });
+            }
+
+            var resWalkDifficulty = await _walkDifficultyService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
+            if (resWalkDifficulty != null && resWalkDifficulty.IsSuccess)
+            {
+                model.WalkDifficultyList = JsonConvert
+                    .DeserializeObject<List<WalkDifficultyDTO>>(Convert.ToString(resWalkDifficulty.Result))
+                    .Select(i => new SelectListItem
+                    {
+                        Text = i.Code,
+                        Value = i.Id.ToString()
+                    });
+            }
+            //het them
+
+            //TempData["error"] = "Error encountered";
             return View(model);
         }
 
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateWalk(Guid walkId)
         {
             var respone = await _walkService.GetAsync<APIResponse>(walkId, HttpContext.Session.GetString(SD.SessionToken));
@@ -69,7 +125,7 @@ namespace NZWalks.Web.Controllers
 
         }
 
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateWalk(UpdateWalkRequest model)
@@ -87,7 +143,7 @@ namespace NZWalks.Web.Controllers
             return View(model);
         }
 
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteWalk(Guid walkId)
         {
             var respone = await _walkService.GetAsync<APIResponse>(walkId, HttpContext.Session.GetString(SD.SessionToken));
@@ -99,7 +155,7 @@ namespace NZWalks.Web.Controllers
             return NotFound();
         }
 
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteWalk(RegionDTO model)
