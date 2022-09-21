@@ -47,7 +47,7 @@ namespace NZWalks.Web.Controllers
                 var respone = await _walkDifficultyService.AddAsync<APIResponse>(model, HttpContext.Session.GetString(SD.SessionToken));
                 if (respone != null && respone.IsSuccess)
                 {
-                    TempData["success"] = "Villa created successfully";
+                    TempData["success"] = "WalkDifficulty created successfully";
                     return RedirectToAction(nameof(IndexWalkDifficulty));
                 }
             }
@@ -56,9 +56,9 @@ namespace NZWalks.Web.Controllers
         }
 
         //[Authorize(Roles = "admin")]
-        public async Task<IActionResult> UpdateWalkDifficulty(Guid walkDifficultyId)
+        public async Task<IActionResult> UpdateWalkDifficulty(Guid id)
         {
-            var respone = await _walkDifficultyService.GetAsync<APIResponse>(walkDifficultyId, HttpContext.Session.GetString(SD.SessionToken));
+            var respone = await _walkDifficultyService.GetAsync<APIResponse>(id, HttpContext.Session.GetString(SD.SessionToken));
             if (respone != null && respone.IsSuccess)
             {
 
@@ -73,25 +73,27 @@ namespace NZWalks.Web.Controllers
         //[Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateWalkDifficulty(UpdateWalkDifficultyRequest updateWalkDifficultyRequest)
+        public async Task<IActionResult> UpdateWalkDifficulty(Guid id, UpdateWalkDifficultyRequest model)
         {
             if (ModelState.IsValid)
             {
-                TempData["success"] = "Villa updated successfully";
-                var respone = await _walkDifficultyService.UpdateAsync<APIResponse>(updateWalkDifficultyRequest, HttpContext.Session.GetString(SD.SessionToken));
+                model.Id = id;
+                
+                var respone = await _walkDifficultyService.UpdateAsync<APIResponse>(model, HttpContext.Session.GetString(SD.SessionToken));
                 if (respone != null && respone.IsSuccess)
                 {
+                    TempData["success"] = "WalkDifficulty updated successfully";
                     return RedirectToAction(nameof(IndexWalkDifficulty));
                 }
             }
             TempData["error"] = "Error encountered";
-            return View(updateWalkDifficultyRequest);
+            return View(model);
         }
 
         //[Authorize(Roles = "admin")]
-        public async Task<IActionResult> DeleteWalkDifficulty(Guid walkDifficultyId)
+        public async Task<IActionResult> DeleteWalkDifficulty(Guid id)
         {
-            var respone = await _walkDifficultyService.GetAsync<APIResponse>(walkDifficultyId, HttpContext.Session.GetString(SD.SessionToken));
+            var respone = await _walkDifficultyService.GetAsync<APIResponse>(id, HttpContext.Session.GetString(SD.SessionToken));
             if (respone != null && respone.IsSuccess)
             {
                 WalkDifficultyDTO model = JsonConvert.DeserializeObject<WalkDifficultyDTO>(Convert.ToString(respone.Result));
@@ -103,12 +105,13 @@ namespace NZWalks.Web.Controllers
         //[Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteWalkDifficulty(WalkDifficultyDTO model)
+        public async Task<IActionResult> DeleteWalkDifficulty(Guid id, WalkDifficultyDTO model)
         {
+            model.Id = id;
             var respone = await _walkDifficultyService.DeleteAsync<APIResponse>(model.Id, HttpContext.Session.GetString(SD.SessionToken));
             if (respone != null && respone.IsSuccess)
             {
-                TempData["success"] = "Villa deleted successfully";
+                TempData["success"] = "WalkDifficulty deleted successfully";
                 return RedirectToAction(nameof(IndexWalkDifficulty));
             }
             TempData["error"] = "Error encountered";

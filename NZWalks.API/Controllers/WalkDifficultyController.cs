@@ -36,19 +36,22 @@ namespace NZWalks.API.Controllers
         [HttpGet]
         [Route("{id:guid}")]
         [ActionName("GetWalkDifficultyById")]
-        public async Task<IActionResult> GetWalkDifficultyById(Guid id)
+        public async Task<ActionResult<APIResponse>> GetWalkDifficultyById(Guid id)
         {
             var walkDifficulty = await _walkDifficultyRepository.GetAsync(id);
+            if(walkDifficulty != null)
+            {
+                _respone.IsSuccess = true;
+                _respone.StatusCode = System.Net.HttpStatusCode.OK;
+                _respone.Result = walkDifficulty;
+            }
             if(walkDifficulty == null)
             {
                 return NotFound();
             }
             var walkDifficultyDTO = _mapper.Map<WalkDifficultyDTO>(walkDifficulty);
-            if(walkDifficultyDTO == null)
-            {
-                return NotFound();
-            }
-            return Ok(walkDifficultyDTO);
+            
+            return Ok(_respone);
         }
 
         [HttpPost]
@@ -68,9 +71,14 @@ namespace NZWalks.API.Controllers
         }
 
         [HttpPut]
+        [Route("{id:guid}")]
         //[Authorize(Roles = "admin")]
-        public async Task<IActionResult> UpdateWalkDifficultyAsync(Guid id, UpdateWalkDifficultyRequest updateWalkDifficultyRequest)
+        public async Task<ActionResult<APIResponse>> UpdateWalkDifficultyAsync([FromRoute] Guid id, [FromBody] UpdateWalkDifficultyRequest updateWalkDifficultyRequest)
         {
+            if (updateWalkDifficultyRequest == null || updateWalkDifficultyRequest.Id != id)
+            {
+                return NotFound();
+            }
             var walkDifficultyDomain = new WalkDifficulty()
             {
                 Code = updateWalkDifficultyRequest.Code
@@ -81,7 +89,10 @@ namespace NZWalks.API.Controllers
                 return NotFound();
             }
             var walkDifficultyDTO = _mapper.Map<WalkDifficultyDTO>(walkDifficultyDomain);
-            return Ok(walkDifficultyDTO);
+            _respone.StatusCode = System.Net.HttpStatusCode.NoContent;
+            _respone.IsSuccess = true;
+            _respone.Result = walkDifficultyDTO;
+            return Ok(_respone);
         }
 
         [HttpDelete]
@@ -95,7 +106,11 @@ namespace NZWalks.API.Controllers
                 return NotFound();
             }
             var walkDifficultyDTO = _mapper.Map<WalkDifficultyDTO>(walkDifficultyDomain);
-            return Ok(walkDifficultyDTO);
+            _respone.StatusCode = System.Net.HttpStatusCode.NoContent;
+            _respone.IsSuccess = true;
+            _respone.Result = walkDifficultyDTO;
+
+            return Ok(_respone);
         }
     }
 }

@@ -41,16 +41,27 @@ namespace NZWalks.API.Controllers
         [HttpGet]
         [Route("{id:guid}")]
         [ActionName("GetWalkAsync")]
-        public async Task<IActionResult> GetWalkAsync(Guid id)
+        public async Task<ActionResult<APIResponse>> GetWalkAsync(Guid id)
         {
             // Get Walk domain object from database
             var walkDomain = await _walkRepository.GetAsync(id);
+
+            if (walkDomain != null)
+            {
+                _respone.IsSuccess = true;
+                _respone.StatusCode = System.Net.HttpStatusCode.OK;
+                _respone.Result = walkDomain;
+            }
+            if (walkDomain == null)
+            {
+                return NotFound();
+            }
 
             // Convert domain object to DTO
             var walkDTO = _mapper.Map<WalkDTO>(walkDomain);
 
             // Return response
-            return Ok(walkDTO);
+            return Ok(_respone);
         }
 
         [HttpPost]
@@ -79,7 +90,7 @@ namespace NZWalks.API.Controllers
         [HttpPut]
         [Route("{id:guid}")]
         //[Authorize(Roles = "admin")]
-        public async Task<IActionResult> UpdateWalkAsync([FromRoute] Guid id, [FromBody] UpdateWalkRequest updateWalkRequest)
+        public async Task<ActionResult<APIResponse>> UpdateWalkAsync([FromRoute] Guid id, [FromBody] UpdateWalkRequest updateWalkRequest)
         {
             if (updateWalkRequest == null || updateWalkRequest.Id != id)
             {
@@ -105,9 +116,12 @@ namespace NZWalks.API.Controllers
 
             // Convert back to DTO
             var walkDTO = _mapper.Map<WalkDTO>(walkDomain);
+            _respone.StatusCode = System.Net.HttpStatusCode.NoContent;
+            _respone.IsSuccess = true;
+            _respone.Result = walkDTO;
 
             // Return response
-            return Ok(walkDTO);
+            return Ok(_respone);
         }
 
         [HttpDelete]
@@ -124,8 +138,11 @@ namespace NZWalks.API.Controllers
             }
 
             var walkDTO = _mapper.Map<WalkDTO>(walkDomain);
+            _respone.StatusCode = System.Net.HttpStatusCode.NoContent;
+            _respone.IsSuccess = true;
+            _respone.Result = walkDTO;
 
-            return Ok(walkDTO);
+            return Ok(_respone);
         }
     }
 }

@@ -6,7 +6,6 @@ namespace NZWalks.Web.Models.DTO
     public class UpdateWalkDifficultyRequest
     {
         [Required]
-        [ValidateNever]
         public Guid Id { get; set; }
         [Required]
         public string Code { get; set; }

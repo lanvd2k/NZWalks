@@ -25,7 +25,7 @@ namespace NZWalks.Web.Controllers
             {
                 list = JsonConvert.DeserializeObject<List<RegionDTO>>(Convert.ToString(respone.Result));
             }
-            
+
             return View(list);
         }
 
@@ -46,7 +46,7 @@ namespace NZWalks.Web.Controllers
                 var respone = await _regionService.AddAsync<APIResponse>(model, HttpContext.Session.GetString(SD.SessionToken));
                 if (respone != null && respone.IsSuccess)
                 {
-                    TempData["success"] = "Villa created successfully";
+                    TempData["success"] = "Region created successfully";
                     return RedirectToAction(nameof(IndexRegion));
                 }
             }
@@ -55,9 +55,9 @@ namespace NZWalks.Web.Controllers
         }
 
         //[Authorize(Roles = "admin")]
-        public async Task<IActionResult> UpdateRegion(Guid regionId)
+        public async Task<IActionResult> UpdateRegion(Guid id)
         {
-            var respone = await _regionService.GetAsync<APIResponse>(regionId, HttpContext.Session.GetString(SD.SessionToken));
+            var respone = await _regionService.GetAsync<APIResponse>(id, HttpContext.Session.GetString(SD.SessionToken));
             if (respone != null && respone.IsSuccess)
             {
 
@@ -71,14 +71,15 @@ namespace NZWalks.Web.Controllers
         //[Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateRegion(UpdateRegionRequest model)
+        public async Task<IActionResult> UpdateRegion(Guid id, UpdateRegionRequest model)
         {
             if (ModelState.IsValid)
             {
-                TempData["success"] = "Villa updated successfully";
+                model.Id = id;
                 var respone = await _regionService.UpdateAsync<APIResponse>(model, HttpContext.Session.GetString(SD.SessionToken));
                 if (respone != null && respone.IsSuccess)
                 {
+                    TempData["success"] = "Region updated successfully";
                     return RedirectToAction(nameof(IndexRegion));
                 }
             }
@@ -87,9 +88,9 @@ namespace NZWalks.Web.Controllers
         }
 
         //[Authorize(Roles = "admin")]
-        public async Task<IActionResult> DeleteRegion(Guid regionId)
+        public async Task<IActionResult> DeleteRegion(Guid id)
         {
-            var respone = await _regionService.GetAsync<APIResponse>(regionId, HttpContext.Session.GetString(SD.SessionToken));
+            var respone = await _regionService.GetAsync<APIResponse>(id, HttpContext.Session.GetString(SD.SessionToken));
             if (respone != null && respone.IsSuccess)
             {
                 RegionDTO model = JsonConvert.DeserializeObject<RegionDTO>(Convert.ToString(respone.Result));
@@ -101,12 +102,13 @@ namespace NZWalks.Web.Controllers
         //[Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteRegion(RegionDTO model)
+        public async Task<IActionResult> DeleteRegion(Guid id, RegionDTO model)
         {
+            model.Id = id;
             var respone = await _regionService.DeleteAsync<APIResponse>(model.Id, HttpContext.Session.GetString(SD.SessionToken));
             if (respone != null && respone.IsSuccess)
             {
-                TempData["success"] = "Villa deleted successfully";
+                TempData["success"] = "Region deleted successfully";
                 return RedirectToAction(nameof(IndexRegion));
             }
             TempData["error"] = "Error encountered";

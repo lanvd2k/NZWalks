@@ -76,7 +76,7 @@ namespace NZWalks.Web.Controllers
                 var respone = await _walkService.AddAsync<APIResponse>(model.Walk, HttpContext.Session.GetString(SD.SessionToken));
                 if (respone != null && respone.IsSuccess)
                 {
-                    TempData["success"] = "Villa created successfully";
+                    TempData["success"] = "Walk created successfully";
                     return RedirectToAction(nameof(IndexWalk));
                 }
             }
@@ -112,9 +112,9 @@ namespace NZWalks.Web.Controllers
         }
 
         //[Authorize(Roles = "admin")]
-        public async Task<IActionResult> UpdateWalk(Guid walkId)
+        public async Task<IActionResult> UpdateWalk(Guid id)
         {
-            var respone = await _walkService.GetAsync<APIResponse>(walkId, HttpContext.Session.GetString(SD.SessionToken));
+            var respone = await _walkService.GetAsync<APIResponse>(id, HttpContext.Session.GetString(SD.SessionToken));
             if (respone != null && respone.IsSuccess)
             {
 
@@ -128,14 +128,16 @@ namespace NZWalks.Web.Controllers
         //[Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateWalk(UpdateWalkRequest model)
+        public async Task<IActionResult> UpdateWalk(Guid id, UpdateWalkRequest model)
         {
             if (ModelState.IsValid)
             {
-                TempData["success"] = "Villa updated successfully";
+                model.Id = id;
+                
                 var respone = await _walkService.UpdateAsync<APIResponse>(model, HttpContext.Session.GetString(SD.SessionToken));
                 if (respone != null && respone.IsSuccess)
                 {
+                    TempData["success"] = "Walk updated successfully";
                     return RedirectToAction(nameof(IndexWalk));
                 }
             }
@@ -144,9 +146,9 @@ namespace NZWalks.Web.Controllers
         }
 
         //[Authorize(Roles = "admin")]
-        public async Task<IActionResult> DeleteWalk(Guid walkId)
+        public async Task<IActionResult> DeleteWalk(Guid id)
         {
-            var respone = await _walkService.GetAsync<APIResponse>(walkId, HttpContext.Session.GetString(SD.SessionToken));
+            var respone = await _walkService.GetAsync<APIResponse>(id, HttpContext.Session.GetString(SD.SessionToken));
             if (respone != null && respone.IsSuccess)
             {
                 WalkDTO model = JsonConvert.DeserializeObject<WalkDTO>(Convert.ToString(respone.Result));
@@ -158,12 +160,13 @@ namespace NZWalks.Web.Controllers
         //[Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteWalk(RegionDTO model)
+        public async Task<IActionResult> DeleteWalk(Guid id, RegionDTO model)
         {
+            model.Id = id;
             var respone = await _walkService.DeleteAsync<APIResponse>(model.Id, HttpContext.Session.GetString(SD.SessionToken));
             if (respone != null && respone.IsSuccess)
             {
-                TempData["success"] = "Villa deleted successfully";
+                TempData["success"] = "Walk deleted successfully";
                 return RedirectToAction(nameof(IndexWalk));
             }
             TempData["error"] = "Error encountered";

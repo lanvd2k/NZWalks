@@ -41,17 +41,23 @@ namespace NZWalks.API.Controllers
         [Route("{id:guid}")]
         [ActionName("GetRegionAsync")]
         //[Authorize(Roles = "reader")]
-        public async Task<IActionResult> GetRegionAsync(Guid id)
+        public async Task<ActionResult<APIResponse>> GetRegionAsync(Guid id)
         {
             var region = await _regionRepository.GetAsync(id);
-            if(region == null)
+            if (region != null)
+            {
+                _respone.IsSuccess = true;
+                _respone.StatusCode = System.Net.HttpStatusCode.OK;
+                _respone.Result = region;
+            }
+            if (region == null)
             {
                 return NotFound();
             }
 
             var regionDTO = _mapper.Map<RegionDTO>(region);
 
-            return Ok(regionDTO);
+            return Ok(_respone);
         }
 
         [HttpPost]
@@ -108,8 +114,12 @@ namespace NZWalks.API.Controllers
 
             var regionDTO = _mapper.Map<RegionDTO>(region);
 
+            _respone.StatusCode = System.Net.HttpStatusCode.NoContent;
+            _respone.IsSuccess = true;
+            _respone.Result = regionDTO;
+
             // Return OK response
-            return Ok(regionDTO);
+            return Ok(_respone);
         }
 
         [HttpPut]
@@ -145,11 +155,12 @@ namespace NZWalks.API.Controllers
             // Convert Domain back to DTO
             var regionDTO = _mapper.Map<RegionDTO>(region);
 
-            //_respone.StatusCode = System.Net.HttpStatusCode.NoContent;
-            //_respone.IsSuccess = true;
+            _respone.StatusCode = System.Net.HttpStatusCode.NoContent;
+            _respone.IsSuccess = true;
+            _respone.Result = regionDTO;
 
             // Return OK response
-            return Ok(regionDTO);
+            return Ok(_respone);
         }
     }
 }
