@@ -1,32 +1,50 @@
-﻿@model NZWalks.Web.Models.DTO.UpdateWalkRequest
+﻿@model NZWalks.Web.Models.DTO.UpdateWalkRequestVM
 
 <form asp-action="UpdateWalk">
     <br />
     <div class="container border p-3">
         <h1 class="text-primary">Update Walk</h1>
         <hr />
-        <input hidden asp-for="Id"/>
+        <input hidden asp-for="Walk.Id"/>
         <div class="row">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
 
             <div class="col-2">
-                <label asp-for="Name" class="control-label pt-2" style="font-size:20px"></label>
+                <label asp-for="Walk.Name" class="control-label pt-2" style="font-size:20px"></label>
             </div>
             <div class="col-10 pb-3">
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <input asp-for="Walk.Name" class="form-control" />
+                <span asp-validation-for="Walk.Name" class="text-danger"></span>
             </div>
 
             <div class="col-2">
-                <label asp-for="Length" class="control-label pt-2" style="font-size:20px"></label>
+                <label asp-for="Walk.Length" class="control-label pt-2" style="font-size:20px"></label>
             </div>
             <div class="col-10 pb-3">
-                <input asp-for="Length" class="form-control" />
-                <span asp-validation-for="Length" class="text-danger"></span>
+                <input asp-for="Walk.Length" class="form-control" />
+                <span asp-validation-for="Walk.Length" class="text-danger"></span>
             </div>
 
-            
+            <div class="col-2">
+                <label asp-for="Walk.RegionId" class="control-label pt-2" style="font-size:20px"></label>
+            </div>
+            <div class="col-10 pb-3">
+                <select asp-for="Walk.RegionId" asp-items="@Model.RegionList" class="form-select">
+                    <option disabled selected>-- Select Region --</option>
+                </select>
+                <span asp-validation-for="Walk.RegionId" class="text-danger"></span>
+            </div>
+
+            <div class="col-2">
+                <label asp-for="Walk.WalkDifficultyId" class="control-label pt-2" style="font-size:20px"></label>
+            </div>
+            <div class="col-10 pb-3">
+                <select asp-for="Walk.WalkDifficultyId" asp-items="@Model.WalkDifficultyList" class="form-select">
+                    <option disabled selected>-- Select WalkDifficulty --</option>
+                </select>
+                <span asp-validation-for="Walk.WalkDifficultyId" class="text-danger"></span>
+            </div>
 
             <div class="col-5">
                 <a asp-action="IndexWalk" asp-controller="Walk" class="btn btn-primary form-control">Back to list</a>

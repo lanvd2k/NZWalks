@@ -114,12 +114,38 @@ namespace NZWalks.Web.Controllers
         //[Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateWalk(Guid id)
         {
+            //them
+            UpdateWalkRequestVM updateWalkRequestVM = new();
+            var responeRegion = await _regionService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
+            if (responeRegion != null && responeRegion.IsSuccess)
+            {
+                updateWalkRequestVM.RegionList = JsonConvert
+                    .DeserializeObject<List<RegionDTO>>(Convert.ToString(responeRegion.Result))
+                    .Select(i => new SelectListItem
+                    {
+                        Text = i.Name,
+                        Value = i.Id.ToString()
+                    });
+            }
+            var responeWalkDifficulty = await _walkDifficultyService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
+            if (responeWalkDifficulty != null && responeWalkDifficulty.IsSuccess)
+            {
+                updateWalkRequestVM.WalkDifficultyList = JsonConvert
+                    .DeserializeObject<List<WalkDifficultyDTO>>(Convert.ToString(responeWalkDifficulty.Result))
+                    .Select(i => new SelectListItem
+                    {
+                        Text = i.Code,
+                        Value = i.Id.ToString()
+                    });
+            }
+            //het them
             var respone = await _walkService.GetAsync<APIResponse>(id, HttpContext.Session.GetString(SD.SessionToken));
             if (respone != null && respone.IsSuccess)
             {
 
                 WalkDTO model = JsonConvert.DeserializeObject<WalkDTO>(Convert.ToString(respone.Result));
-                return View(_mapper.Map<UpdateWalkRequest>(model));
+                updateWalkRequestVM.Walk = _mapper.Map<UpdateWalkRequest>(model);
+                return View(updateWalkRequestVM);
             }
             return NotFound();
 
@@ -128,13 +154,38 @@ namespace NZWalks.Web.Controllers
         //[Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateWalk(Guid id, UpdateWalkRequest model)
+        public async Task<IActionResult> UpdateWalk(Guid id, UpdateWalkRequestVM model)
         {
             if (ModelState.IsValid)
             {
-                model.Id = id;
-                
-                var respone = await _walkService.UpdateAsync<APIResponse>(model, HttpContext.Session.GetString(SD.SessionToken));
+                model.Walk.Id = id;
+                //them
+                //UpdateWalkRequestVM updateWalkRequestVM = new();
+                var responeRegion = await _regionService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
+                if (responeRegion != null && responeRegion.IsSuccess)
+                {
+                    model.RegionList = JsonConvert
+                        .DeserializeObject<List<RegionDTO>>(Convert.ToString(responeRegion.Result))
+                        .Select(i => new SelectListItem
+                        {
+                            Text = i.Name,
+                            Value = i.Id.ToString()
+                        });
+                }
+                var responeWalkDifficulty = await _walkDifficultyService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
+                if (responeWalkDifficulty != null && responeWalkDifficulty.IsSuccess)
+                {
+                    model.WalkDifficultyList = JsonConvert
+                        .DeserializeObject<List<WalkDifficultyDTO>>(Convert.ToString(responeWalkDifficulty.Result))
+                        .Select(i => new SelectListItem
+                        {
+                            Text = i.Code,
+                            Value = i.Id.ToString()
+                        });
+                }
+                //het them
+
+                var respone = await _walkService.UpdateAsync<APIResponse>(model.Walk, HttpContext.Session.GetString(SD.SessionToken));
                 if (respone != null && respone.IsSuccess)
                 {
                     TempData["success"] = "Walk updated successfully";
